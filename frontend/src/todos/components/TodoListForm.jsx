@@ -37,7 +37,7 @@ export const TodoListForm = ({ todoList, onTaskUpdated, code }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-      }).then((res) => res.json())
+      })
     },
   })
 
@@ -87,6 +87,7 @@ export const TodoListForm = ({ todoList, onTaskUpdated, code }) => {
           ...tasks.slice(0, index),
           ...tasks.slice(index + 1),
         ])
+        console.log(tasks)
         onTaskUpdated({ ...todoList, tasks })
       },
     })
