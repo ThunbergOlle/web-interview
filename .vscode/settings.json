@@ -2,5 +2,6 @@
   "eslint.workingDirectories": [
     "./backend", 
     "./frontend"
-  ]
+  ],
+  "files.exclude": {}
 }

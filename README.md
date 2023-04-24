@@ -10,6 +10,7 @@ Fork the repository (see top-right button on GitHub) and clone the fork to your 
 ### To start the backend:
 
  - Navigate to the backend folder
+ - Run `npm install typescript --global` to install TypeScript
  - Run `npm ci`
  - Run `npm start`
 
