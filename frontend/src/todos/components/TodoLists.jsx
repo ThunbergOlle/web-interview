@@ -12,28 +12,22 @@ import {
   Typography,
 } from '@mui/material'
 import React, { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { baseUrl } from '../../config/baseUrl'
+import { createListMutationRequest } from '../../requests/mutations'
 import ErrorComponent from './ErrorComponent'
 import { TodoListForm } from './TodoListForm'
-
 export const TodoLists = ({ code }) => {
   const queryClient = useQueryClient()
   const [activeList, setActiveList] = useState()
 
+  /* Query for getting all of the todo-lists and their tasks */
   const { isLoading, error, data, refetch } = useQuery(['listData', code], {
-    queryFn: () => fetch(`http://localhost:3001/lists?code=${code}`, {}).then((res) => res.json()),
+    queryFn: () => fetch(`${baseUrl}/lists?code=${code}`, {}).then((res) => res.json()),
   })
 
-  const mutation = useMutation({
-    mutationFn: (newList) => {
-      return fetch(`http://localhost:3001/lists?code=${code}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newList),
-      }).then((res) => res.json())
-    },
+  const createListMutation = useMutation({
+    mutationFn: createListMutationRequest,
   })
 
   if (isLoading) return <CircularProgress />
@@ -41,14 +35,17 @@ export const TodoLists = ({ code }) => {
 
   const handleNewListSubmit = async (event) => {
     event.preventDefault()
+
+    /* Get the new list name and clear the old value */
     const newListName = event.target.newListName.value
     event.target.newListName.value = ''
-    mutation.mutate(
-      { name: newListName },
+
+    createListMutation.mutate(
+      { list: { name: newListName }, code: code },
       {
         onSuccess: (data) => {
           setActiveList(data)
-          refetch()
+          refetch() // refetch the lists data.
         },
       }
     )
