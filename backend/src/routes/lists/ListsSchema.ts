@@ -6,9 +6,8 @@ export const requestSchema: RequestSchema = {
     type: 'object',
     properties: {
       name: { type: 'string' },
-      code: { type: 'string' },
     },
-    required: ['code', 'name'],
+    required: ['name'],
   },
 }
 

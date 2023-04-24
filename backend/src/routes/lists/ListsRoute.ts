@@ -12,7 +12,7 @@ listsRouter.get('/', async (req, res) => {
   try {
     const code = req.query.code
     if (code) {
-      const lists = await ListEntity.find({ where: { code: String(code) } })
+      const lists = await ListEntity.find({ where: { code: String(code) }, relations: ['tasks'] })
       return res.json(lists)
     }
     res.status(400).send('Missing code query parameter')
@@ -24,8 +24,12 @@ listsRouter.get('/', async (req, res) => {
 
 listsRouter.post('/', validate({ body: requestSchema.POST }), async (req, res) => {
   try {
-    const { name, code } = req.body
-    const list = ListEntity.create({ name, code })
+    const code = req.query.code
+    if (!code) {
+      return res.status(400).send('Missing code query parameter')
+    }
+    const { name } = req.body
+    const list = ListEntity.create({ name: name, code: String(code), tasks: [] })
     await list.save()
     res.json(list)
   } catch (e) {

@@ -1,11 +1,12 @@
 import 'reflect-metadata' // required for typeorm
-import express from 'express'
 import cors from 'cors'
-import { AppDataSource } from './db/data-source'
-import { ListEntity } from './db/entities/ListEntity'
 import dotenv from 'dotenv'
+import express, { Request, Response } from 'express'
+import { ValidationError } from 'express-json-validator-middleware'
+import { AppDataSource } from './db/data-source'
 import listsRouter from './routes/lists/ListsRoute'
-import listsItemRouter from './routes/lists/item/ListsItemRoute'
+import listsItemRouter from './routes/lists/tasks/ListsTasksRoute'
+import listsTaskRouter from './routes/lists/tasks/ListsTasksRoute'
 
 dotenv.config()
 
@@ -22,8 +23,19 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/lists', listsRouter)
-app.use('/lists/item', listsItemRouter)
+app.use('/lists/tasks', listsTaskRouter)
 
+app.use((error: Error, request: Request, response: Response, next: Function) => {
+  // Check the error is a validation error
+  if (error instanceof ValidationError) {
+    // Handle the error
+    response.status(400).send(error.validationErrors)
+    next()
+  } else {
+    // Pass error on if not a validation error
+    next(error)
+  }
+})
 app.listen(process.env.PORT, () =>
   console.log(`Todo app listening on port ${process.env.PORT}! 📝`)
 )

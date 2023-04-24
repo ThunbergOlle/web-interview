@@ -2,11 +2,11 @@ import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 't
 import { ListEntity } from './ListEntity'
 
 @Entity()
-export class ListRowEntity extends BaseEntity {
+export class ListTaskEntity extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number
 
-  @ManyToOne(() => ListEntity, (list) => list.rows)
+  @ManyToOne(() => ListEntity, (list) => list.tasks)
   list: ListEntity
 
   @Column({ type: 'varchar', length: 1000, nullable: false })

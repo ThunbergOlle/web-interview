@@ -1,73 +1,101 @@
 import ReceiptIcon from '@mui/icons-material/Receipt'
 import {
+  Button,
   Card,
   CardContent,
+  CircularProgress,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  TextField,
   Typography,
 } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
+import ErrorComponent from './ErrorComponent'
 import { TodoListForm } from './TodoListForm'
 
-// Simulate network
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const fetchTodoLists = () => {
-  return sleep(1000).then(() =>
-    Promise.resolve({
-      '0000000001': {
-        id: '0000000001',
-        title: 'First List',
-        todos: ['First todo of first list!'],
-      },
-      '0000000002': {
-        id: '0000000002',
-        title: 'Second List',
-        todos: ['First todo of second list!'],
-      },
-    })
-  )
-}
-
-export const TodoLists = () => {
-  const [todoLists, setTodoLists] = useState({})
+export const TodoLists = ({ code }) => {
+  const queryClient = useQueryClient()
   const [activeList, setActiveList] = useState()
 
-  useEffect(() => {
-    fetchTodoLists().then(setTodoLists)
-  }, [])
+  const { isLoading, error, data, refetch } = useQuery(['listData', code], {
+    queryFn: () => fetch(`http://localhost:3001/lists?code=${code}`, {}).then((res) => res.json()),
+  })
 
-  if (!Object.keys(todoLists).length) return null
+  const mutation = useMutation({
+    mutationFn: (newList) => {
+      return fetch(`http://localhost:3001/lists?code=${code}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newList),
+      }).then((res) => res.json())
+    },
+  })
+
+  if (isLoading) return <CircularProgress />
+  if (error) return <ErrorComponent />
+
+  const handleNewListSubmit = async (event) => {
+    event.preventDefault()
+    const newListName = event.target.newListName.value
+    event.target.newListName.value = ''
+    mutation.mutate(
+      { name: newListName },
+      {
+        onSuccess: (data) => {
+          setActiveList(data)
+          refetch()
+        },
+      }
+    )
+  }
+
   return (
     <>
       <Card className='m-4'>
         <CardContent>
           <Typography component='h2'>My Todo Lists</Typography>
           <List>
-            {Object.keys(todoLists).map((key) => (
-              <ListItemButton key={key} onClick={() => setActiveList(key)}>
+            {data.map((list, index) => (
+              <ListItemButton key={index} onClick={() => setActiveList(list)}>
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
-                <ListItemText primary={todoLists[key].title} />
+                <ListItemText primary={list.name} />
               </ListItemButton>
             ))}
           </List>
+          <form onSubmit={handleNewListSubmit} className='flex flex-row w-full items-center'>
+            <TextField
+              name='newListName'
+              className='flex-grow-1 w-full'
+              label='I want to create a to-do list about...'
+              onChange={(event) => {
+                console.log(event.target.value)
+              }}
+            />
+            <Button className='!ml-10 ' variant='contained' color='primary' type='submit'>
+              Add
+            </Button>
+          </form>
         </CardContent>
       </Card>
-      {todoLists[activeList] && (
+      {activeList && (
         <TodoListForm
-          key={activeList} // use key to make React recreate component to reset internal state
-          todoList={todoLists[activeList]}
-          saveTodoList={(id, { todos }) => {
-            const listToUpdate = todoLists[id]
-            setTodoLists({
-              ...todoLists,
-              [id]: { ...listToUpdate, todos },
+          key={activeList.name} // use key to make React recreate component to reset internal state
+          todoList={activeList}
+          onTaskUpdated={(updatedTaskList) => {
+            /* do optimistic updates */
+            queryClient.setQueriesData(['listData', code], (oldData) => {
+              const index = oldData.findIndex((list) => list.id === updatedTaskList.id)
+              return [...oldData.slice(0, index), updatedTaskList, ...oldData.slice(index + 1)]
             })
           }}
+          code={code}
         />
       )}
     </>

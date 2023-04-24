@@ -5,10 +5,9 @@ export const requestSchema: RequestSchema = {
   POST: {
     type: 'object',
     properties: {
-      code: { type: 'string' },
       listId: { type: 'number' },
       text: { type: 'string' },
     },
-    required: ['code', 'listId', 'text'],
+    required: ['listId', 'text'],
   },
 }
