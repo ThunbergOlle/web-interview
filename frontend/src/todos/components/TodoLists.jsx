@@ -1,14 +1,14 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import ReceiptIcon from '@mui/icons-material/Receipt'
 import {
   Card,
   CardContent,
   List,
   ListItemButton,
-  ListItemText,
   ListItemIcon,
+  ListItemText,
   Typography,
 } from '@mui/material'
-import ReceiptIcon from '@mui/icons-material/Receipt'
+import React, { useEffect, useState } from 'react'
 import { TodoListForm } from './TodoListForm'
 
 // Simulate network
@@ -31,7 +31,7 @@ const fetchTodoLists = () => {
   )
 }
 
-export const TodoLists = ({ style }) => {
+export const TodoLists = () => {
   const [todoLists, setTodoLists] = useState({})
   const [activeList, setActiveList] = useState()
 
@@ -41,8 +41,8 @@ export const TodoLists = ({ style }) => {
 
   if (!Object.keys(todoLists).length) return null
   return (
-    <Fragment>
-      <Card style={style}>
+    <>
+      <Card className='m-4'>
         <CardContent>
           <Typography component='h2'>My Todo Lists</Typography>
           <List>
@@ -70,6 +70,6 @@ export const TodoLists = ({ style }) => {
           }}
         />
       )}
-    </Fragment>
+    </>
   )
 }

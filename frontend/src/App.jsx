@@ -14,20 +14,12 @@ const MainAppBar = () => {
   )
 }
 
-const mainWrapperStyle = { display: 'flex', flexDirection: 'column' }
-const centerContentWrapper = { display: 'flex', justifyContent: 'center' }
-const contentWrapperStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  maxWidth: '80rem',
-  flexGrow: 1,
-}
 const MainWrapper = ({ children }) => {
   return (
-    <div style={mainWrapperStyle}>
+    <div className='flex flex-col'>
       <MainAppBar />
-      <div style={centerContentWrapper}>
-        <div style={contentWrapperStyle}>{children}</div>
+      <div className='flex justify-center'>
+        <div className='flex flex-col max-w-7xl flex-grow-[1]'>{children}</div>
       </div>
     </div>
   )
@@ -36,7 +28,7 @@ const MainWrapper = ({ children }) => {
 const App = () => {
   return (
     <MainWrapper>
-      <TodoLists style={{ margin: '1rem' }} />
+      <TodoLists />
     </MainWrapper>
   )
 }

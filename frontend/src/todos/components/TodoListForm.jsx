@@ -12,20 +12,17 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
   }
 
   return (
-    <Card sx={{ margin: '0 1rem' }}>
+    <Card className='m-4'>
       <CardContent>
         <Typography component='h2'>{todoList.title}</Typography>
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}
-        >
+        <form onSubmit={handleSubmit} className='flex flex-col flex-grow-1'>
           {todos.map((name, index) => (
-            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ margin: '8px' }} variant='h6'>
+            <div key={index} className='flex items-center'>
+              <Typography className='!m-2' variant='h6'>
                 {index + 1}
               </Typography>
               <TextField
-                sx={{ flexGrow: 1, marginTop: '1rem' }}
+                className='flex-grow-1 !mt-4'
                 label='What to do?'
                 value={name}
                 onChange={(event) => {
@@ -38,7 +35,7 @@ export const TodoListForm = ({ todoList, saveTodoList }) => {
                 }}
               />
               <Button
-                sx={{ margin: '8px' }}
+                className='!mt-4'
                 size='small'
                 color='secondary'
                 onClick={() => {
