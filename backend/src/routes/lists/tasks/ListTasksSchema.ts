@@ -1,13 +1,34 @@
 import { RequestSchema } from '../../../types/RequestSchema'
+import CodeQueryParam from '../../../validation/CodeQueryParam'
 
 export const requestSchema: RequestSchema = {
-  GET: {},
+  GET: {
+    body: {},
+    queryParams: CodeQueryParam,
+  },
   POST: {
-    type: 'object',
-    properties: {
-      listId: { type: 'number' },
-      text: { type: 'string' },
+    body: {
+      type: 'object',
+      properties: {
+        listId: { type: 'number' },
+        text: { type: 'string' },
+      },
+      required: ['listId', 'text'],
     },
-    required: ['listId', 'text'],
+    queryParams: CodeQueryParam,
+  },
+  PUT: {
+    body: {
+      type: 'object',
+      properties: {
+        text: { type: 'string' },
+      },
+      required: ['text'],
+    },
+    queryParams: CodeQueryParam,
+  },
+  DELETE: {
+    body: {},
+    queryParams: CodeQueryParam,
   },
 }

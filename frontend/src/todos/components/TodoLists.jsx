@@ -17,13 +17,17 @@ import { baseUrl } from '../../config/baseUrl'
 import { createListMutationRequest } from '../../requests/mutations'
 import ErrorComponent from './ErrorComponent'
 import { TodoListForm } from './TodoListForm'
+import { defaultHeaders } from '../../config/defaultHeaders'
 export const TodoLists = ({ code }) => {
   const queryClient = useQueryClient()
   const [activeList, setActiveList] = useState()
 
   /* Query for getting all of the todo-lists and their tasks */
   const { isLoading, error, data, refetch } = useQuery(['listData', code], {
-    queryFn: () => fetch(`${baseUrl}/lists?code=${code}`, {}).then((res) => res.json()),
+    queryFn: () => fetch(`${baseUrl}/lists?code=${code}`, {
+      method: 'GET',
+      headers: defaultHeaders
+    }).then((res) => res.json()),
   })
 
   const createListMutation = useMutation({
