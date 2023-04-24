@@ -90,7 +90,7 @@ export const TodoLists = ({ code }) => {
           key={activeList.name} // use key to make React recreate component to reset internal state
           todoList={activeList}
           onTaskUpdated={(updatedTaskList) => {
-            /* do optimistic updates */
+            /* Supporting "optmistic" updates*/
             queryClient.setQueriesData(['listData', code], (oldData) => {
               const index = oldData.findIndex((list) => list.id === updatedTaskList.id)
               return [...oldData.slice(0, index), updatedTaskList, ...oldData.slice(index + 1)]

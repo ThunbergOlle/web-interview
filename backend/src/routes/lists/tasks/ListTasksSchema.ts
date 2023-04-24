@@ -22,8 +22,9 @@ export const requestSchema: RequestSchema = {
       type: 'object',
       properties: {
         text: { type: 'string' },
+        completed: { type: 'boolean' },
       },
-      required: ['text'],
+      required: ['text', 'completed'],
     },
     queryParams: CodeQueryParam,
   },

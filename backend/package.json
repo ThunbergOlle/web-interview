@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "lint": "eslint --ext .js src",
+    "lint": "eslint --ext .ts src",
     "start": "ts-node src/index.ts",
     "compile": "tsc"
   },
@@ -16,7 +16,9 @@
     "@tsconfig/node16": "^1.0.3",
     "@types/express": "^4.17.17",
     "@types/node": "^18.16.0",
-    "eslint": "^8.15.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "eslint": "^8.39.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }

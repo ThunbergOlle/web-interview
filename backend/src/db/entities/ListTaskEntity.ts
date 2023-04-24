@@ -11,4 +11,7 @@ export class ListTaskEntity extends BaseEntity {
 
   @Column({ type: 'varchar', length: 1000, nullable: false })
   text: string
+
+  @Column({ type: 'boolean', default: false })
+  completed: boolean
 }

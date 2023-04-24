@@ -1,6 +1,8 @@
 import { baseUrl } from '../config/baseUrl'
 import { defaultHeaders } from '../config/defaultHeaders'
 
+/* All mutations are stored here. This includes POST, PUT & DELETE requests */
+
 export const createListMutationRequest = ({ list, code }) => {
   return fetch(`${baseUrl}/lists?code=${code}`, {
     method: 'POST',

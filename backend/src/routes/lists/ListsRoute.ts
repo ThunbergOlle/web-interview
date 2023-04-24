@@ -14,7 +14,15 @@ listsRouter.get(
     try {
       const code = req.query.code
 
-      const lists = await ListEntity.find({ where: { code: String(code) }, relations: ['tasks'] })
+      const lists = await ListEntity.find({
+        where: { code: String(code) },
+        relations: ['tasks'],
+        order: {
+          tasks: {
+            id: 'ASC',
+          },
+        },
+      })
       return res.json(lists)
     } catch (e) {
       console.error(e)

@@ -20,7 +20,7 @@ listsTaskRouter.post(
         return res.status(400).send('List not found')
       }
       // create row
-      const row = ListTaskEntity.create({ text, list })
+      const row = ListTaskEntity.create({ text, list, completed: false })
       await row.save()
       res.json(row)
     } catch (e) {
@@ -44,17 +44,18 @@ listsTaskRouter.put(
         return res.status(400).send('List not found')
       }
 
-      // check if row exists
-      const row = await ListTaskEntity.findOne({ where: { id: Number(id) } })
-      if (!row) {
-        return res.status(400).send('Row not found')
+      // check if task exists
+      const task = await ListTaskEntity.findOne({ where: { id: Number(id) } })
+      if (!task) {
+        return res.status(400).send('Task not found')
       }
 
-      // update row
-      const { text } = req.body
-      row.text = text
-      await row.save()
-      res.json(row)
+      // update task
+      const { text, completed } = req.body
+      task.text = text
+      task.completed = completed
+      await task.save()
+      res.json(task)
     } catch (e) {
       console.error(e)
       res.sendStatus(500)
@@ -62,29 +63,33 @@ listsTaskRouter.put(
   }
 )
 
-listsTaskRouter.delete('/:id', validate({ body: requestSchema.DELETE?.body, query: requestSchema.DELETE?.queryParams }),async (req, res) => {
-  try {
-    const code = req.query.code
-    const id = req.params.id
+listsTaskRouter.delete(
+  '/:id',
+  validate({ body: requestSchema.DELETE?.body, query: requestSchema.DELETE?.queryParams }),
+  async (req, res) => {
+    try {
+      const code = req.query.code
+      const id = req.params.id
 
-    // check if list exists
-    const list = await ListEntity.findOne({ where: { code: String(code) } })
-    if (!list) {
-      return res.status(400).send('List not found')
+      // check if list exists
+      const list = await ListEntity.findOne({ where: { code: String(code) } })
+      if (!list) {
+        return res.status(400).send('List not found')
+      }
+
+      // check if task exists
+      const task = await ListTaskEntity.findOne({ where: { id: Number(id) } })
+      if (!task) {
+        return res.status(400).send('Task not found')
+      }
+
+      // delete task
+      await task.remove()
+      res.sendStatus(200)
+    } catch (e) {
+      console.error(e)
+      res.sendStatus(500)
     }
-
-    // check if row exists
-    const row = await ListTaskEntity.findOne({ where: { id: Number(id) } })
-    if (!row) {
-      return res.status(400).send('Row not found')
-    }
-
-    // delete row
-    await row.remove()
-    res.sendStatus(200)
-  } catch (e) {
-    console.error(e)
-    res.sendStatus(500)
   }
-})
+)
 export default listsTaskRouter

@@ -1,9 +1,21 @@
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Button, Card, CardActions, CardContent, TextField, Typography } from '@mui/material'
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Checkbox,
+  TextField,
+  Typography,
+} from '@mui/material'
 import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
-import { createTaskMutationRequest, deleteTaskMutationRequest, saveTaskMutationRequest } from '../../requests/mutations'
+import {
+  createTaskMutationRequest,
+  deleteTaskMutationRequest,
+  saveTaskMutationRequest,
+} from '../../requests/mutations'
 
 export const TodoListForm = ({ todoList, onTaskUpdated, code }) => {
   const queryClient = useQueryClient()
@@ -16,7 +28,7 @@ export const TodoListForm = ({ todoList, onTaskUpdated, code }) => {
     mutationFn: saveTaskMutationRequest,
   })
   const deleteTaskMutation = useMutation({
-    mutationFn: deleteTaskMutationRequest
+    mutationFn: deleteTaskMutationRequest,
   })
 
   const createTask = (task) => {
@@ -25,6 +37,7 @@ export const TodoListForm = ({ todoList, onTaskUpdated, code }) => {
       { task: { text: task.text, listId: todoList.id }, code: code },
       {
         onError: () => {
+          /* When invalidating the listData query, it forces it to re-fetch its data */
           queryClient.invalidateQueries({ queryKey: ['listData', code] })
         },
         onSuccess: (data) => {
@@ -113,6 +126,20 @@ export const TodoListForm = ({ todoList, onTaskUpdated, code }) => {
             >
               <DeleteIcon />
             </Button>
+            {/* checkbox for compelted or not */}
+            <Checkbox
+              className='!mt-4'
+              checked={task.completed}
+              onChange={(event) => {
+                setTasks([
+                  // immutable update
+                  ...tasks.slice(0, index),
+                  { ...task, completed: event.target.checked },
+                  ...tasks.slice(index + 1),
+                ])
+                saveTask({ ...task, completed: event.target.checked })
+              }}
+            />
           </div>
         ))}
         <CardActions>
